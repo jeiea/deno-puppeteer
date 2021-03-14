@@ -27,7 +27,8 @@ import { TimeoutError } from "../../vendor/puppeteer-core/puppeteer/common/Error
 import { readLines } from "../../vendor/puppeteer-core/vendor/std.ts";
 
 const debugLauncher = debug("puppeteer:launcher");
-const PROCESS_ERROR_EXPLANATION = `Puppeteer was unable to kill the process which ran the browser binary.
+const PROCESS_ERROR_EXPLANATION =
+  `Puppeteer was unable to kill the process which ran the browser binary.
 This means that, on future Puppeteer launches, Puppeteer might not be able to launch the browser.
 Please check your open processes and ensure that the browser processes that Puppeteer launched have been killed.
 If you think this is a bug, please report it on the Puppeteer issue tracker.`;
@@ -47,7 +48,7 @@ export class BrowserRunner {
   constructor(
     executablePath: string,
     processArguments: string[],
-    tempDirectory?: string
+    tempDirectory?: string,
   ) {
     this._executablePath = executablePath;
     this._processArguments = processArguments;
@@ -58,7 +59,7 @@ export class BrowserRunner {
     const { env } = options;
     assert(!this.proc, "This process has previously been started.");
     debugLauncher(
-      `Calling ${this._executablePath} ${this._processArguments.join(" ")}`
+      `Calling ${this._executablePath} ${this._processArguments.join(" ")}`,
     );
     this.proc = Deno.run({
       cmd: [this._executablePath, ...this._processArguments],
@@ -127,7 +128,7 @@ export class BrowserRunner {
         this.proc.kill(9);
       } catch (error) {
         throw new Error(
-          `${PROCESS_ERROR_EXPLANATION}\nError cause: ${error.stack}`
+          `${PROCESS_ERROR_EXPLANATION}\nError cause: ${error.stack}`,
         );
       }
     }
@@ -145,7 +146,7 @@ export class BrowserRunner {
     const browserWSEndpoint = await waitForWSEndpoint(
       this.proc!,
       timeout,
-      preferredRevision
+      preferredRevision,
     );
     const transport = await BrowserWebSocketTransport.create(browserWSEndpoint);
     this.connection = new Connection(browserWSEndpoint, transport, slowMo);
@@ -156,11 +157,11 @@ export class BrowserRunner {
 async function waitForWSEndpoint(
   browserProcess: Deno.Process,
   timeout: number,
-  preferredRevision: string
+  preferredRevision: string,
 ): Promise<string> {
   const timeId = setTimeout(() => {
     throw new TimeoutError(
-      `Timed out after ${timeout} ms while trying to connect to the browser! Only Chrome at revision r${preferredRevision} is guaranteed to work.`
+      `Timed out after ${timeout} ms while trying to connect to the browser! Only Chrome at revision r${preferredRevision} is guaranteed to work.`,
     );
   }, timeout);
 
@@ -178,6 +179,6 @@ async function waitForWSEndpoint(
       "Failed to launch the browser process!" + "",
       "TROUBLESHOOTING: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md",
       "",
-    ].join("\n")
+    ].join("\n"),
   );
 }
